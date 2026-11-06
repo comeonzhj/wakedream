@@ -24,3 +24,7 @@ dist/
 
 # 打包/发布临时
 .tauri/
+
+# 边车构建报告：每次构建重写的产物（含构建机信息），不入库
+# 本地保留可用 scripts/build-sidecar.mjs 生成，并已做脱敏
+/desktop/build-report.json

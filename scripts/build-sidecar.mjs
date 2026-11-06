@@ -500,7 +500,31 @@ async function main() {
         const sizeMB = fs.statSync(outFile).size / 1024 / 1024;
         console.log(`· 产物：${path.relative(REPO_DIR, outFile)}（${sizeMB.toFixed(1)} MiB）`);
 
-        const report = {
+        // 落盘前脱敏：这份报告是按约定提交进仓库的，不能带出跑构建那台机器的标识
+        // （主机名会出现在 lan.deviceName、临时 HOME 会出现在冒烟自检的日志里）。
+        const sanitize = (value) => {
+            if (typeof value === 'string') {
+                let out = value.split(os.hostname()).join('<device>');
+                // 仓库自身的绝对路径（codesign 的 Executable=… 会带出来）
+                // 用「应用根」当 <repo>：已发布仓库的根就是 app/，这样渲染成 <repo>/src-tauri/… 而不是 <repo>/app/src-tauri/…
+                out = out.split(APP_DIR).join('<repo>');
+                out = out.split(REPO_DIR).join('<repo-root>');
+                // 临时目录（冒烟自检用的假 HOME）
+                out = out.replace(/\/private\/var\/folders\/[A-Za-z0-9_]+\/[A-Za-z0-9_]+\/T\/[^\s"']*/g, '<tmp-home>');
+                out = out.replace(/\/var\/folders\/[A-Za-z0-9_]+\/[A-Za-z0-9_]+\/T\/[^\s"']*/g, '<tmp-home>');
+                // 任何还残留的家目录绝对路径（/Users/<name>/…、/home/<name>/…）
+                out = out.replace(/\/Users\/[A-Za-z0-9._-]+/g, () => '$HOME');
+                out = out.replace(/\/home\/[A-Za-z0-9._-]+/g, () => '$HOME');
+                return out;
+            }
+            if (Array.isArray(value)) return value.map(sanitize);
+            if (value && typeof value === 'object') {
+                return Object.fromEntries(Object.entries(value).map(([k, v]) => [k, sanitize(v)]));
+            }
+            return value;
+        };
+
+        const report = sanitize({
             target,
             node: process.version,
             nodePath: process.execPath,
@@ -513,7 +537,10 @@ async function main() {
             builtAt: new Date().toISOString(),
             durationMs: null,
             verify: null,
-        };
+        });
+        // 路径类字段固定用占位符（sanitize 只处理机器名与临时目录，不处理家目录路径）
+        report.nodePath = '<node>';
+        if (report.rustc) report.rustc = '<rustc>';
 
         if (args.verify) {
             console.log('· 冒烟自检：真跑二进制 + /api/health + 静态资源 + api 模块');
@@ -528,7 +555,9 @@ async function main() {
 
         report.durationMs = Date.now() - t0;
         const reportPath = path.join(DESKTOP_DIR, 'build-report.json');
-        fs.writeFileSync(reportPath, `${JSON.stringify(report, null, 2)}\n`);
+        // 注意：verify（冒烟自检）是在上面 sanitize 之后才挂上去的，里面同样有临时 HOME、主机名与启动日志，
+        // 所以落盘时必须整体再过一遍 sanitize，而不是只清洗前半段。
+        fs.writeFileSync(reportPath, `${JSON.stringify(sanitize(report), null, 2)}\n`);
         console.log(`✓ 边车就绪：${path.relative(REPO_DIR, outFile)}（${sizeMB.toFixed(1)} MiB，用时 ${((Date.now() - t0) / 1000).toFixed(1)}s）`);
         console.log(`  报告：${path.relative(REPO_DIR, reportPath)}`);
     } finally {
