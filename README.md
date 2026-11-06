@@ -34,15 +34,17 @@ scripts/install-nightly.sh 03:30     # launchd 定时；scripts/uninstall-nightl
 仓库同时是一个 **Tauri v2** 桌面应用（不是 Electron）：Tauri 壳在启动时拉起随包分发的 Node 边车（官方 SEA 打成单文件二进制），等 `/api/health` 就绪后打开窗口，退出时回收边车。
 
 ```bash
-# 开发态（用系统 node 跑服务）
-npx tauri dev
+cd desktop && npm install        # 只装构建期依赖（@tauri-apps/cli / esbuild / postject），运行期零依赖
 
-# 构建安装包（macOS 出 .app/.dmg；Windows 出 .msi/.exe；Linux 出 .deb/.AppImage）
-node scripts/build-sidecar.mjs --target aarch64-apple-darwin   # 先出边车
-npx tauri build
+# 开发态：没有边车二进制时自动退回系统 node 跑 src/server/main.js
+./desktop/node_modules/.bin/tauri dev
+
+# 出安装包：先打边车（Node SEA 单文件），再打包
+node scripts/build-sidecar.mjs --target aarch64-apple-darwin
+./desktop/node_modules/.bin/tauri build          # macOS 出 .app/.dmg
 ```
 
-三平台各自的依赖、产物位置、以及我们**只在 macOS arm64 真机构建与启动验证过**这件事，写在 [`docs/DESKTOP.md`](docs/DESKTOP.md)；`.github/workflows/` 里有三平台的自动打包工作流。
+三平台各自的依赖、产物位置、以及我们**只在 macOS arm64 真机构建与启动验证过**这件事，写在 [`docs/DESKTOP.md`](docs/DESKTOP.md)；`.github/workflows/desktop.yml` 是三平台的自动打包工作流。
 
 ## 三个动作
 
