@@ -10,7 +10,7 @@
 
 ## 2. DeepSeek Harness（DSH）
 
-- 用途：本仓库由 DeepSeek Harness 的智能体开发与验证；界面设计语言参照其 Web 客户端（`app/web/docs/dsh-reference.md` 记录了观察结论）。
+- 用途：本仓库由 DeepSeek Harness 的智能体开发与验证；界面设计语言参照其 Web 客户端（`web/docs/dsh-reference.md`（本仓库根目录即应用根） 记录了观察结论）。
 - DSH 是开发工具，本仓库不包含其代码，也不依赖它运行。
 
 ## MIT 许可证原文（Wake，用于上面第 1 条的派生测试数据）

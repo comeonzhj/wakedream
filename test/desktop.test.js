@@ -317,7 +317,8 @@ test('13. 边车二进制真跑起来：/api/health 返回 ok，静态资源与 
     assert.equal(health.body.app, 'WakeDream');
 });
 
-test('14. macOS 构建产物带 ad-hoc 签名（否则 Apple Silicon 拒绝执行）', { skip: SKIP_NO_SIDECAR || process.platform !== 'darwin' ? '仅 macOS 适用' : false }, async () => {
+test('14. macOS 构建产物带 ad-hoc 签名（否则 Apple Silicon 拒绝执行）', { skip: process.platform !== 'darwin' ? '仅 macOS 适用'
+        : (SKIP_NO_SIDECAR ? '未构建 macOS 边车/产物（先跑 scripts/build-sidecar.mjs 与 tauri build；干净 clone 下属预期跳过）' : false) }, async () => {
     const { spawnSync } = await import('node:child_process');
     const r = spawnSync('codesign', ['-dv', SIDECAR_FILE], { encoding: 'utf8' });
     const out = `${r.stderr}${r.stdout}`;

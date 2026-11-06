@@ -119,6 +119,8 @@ node --test test/dream.test.js      # 单模块
 node web/dev-mock-server.mjs --port 4780   # 纯假数据跑前端，不需要真实会话
 ```
 
+> 干净 clone 直接跑全量是 **110 通过 + 5 跳过**：跳过的 5 条在 `test/desktop.test.js`，它们要检查**构建产物**（边车二进制、`.app`、`.dmg`），这些产物按 `.gitignore` 不进仓库。先跑 `scripts/build-sidecar.mjs` 与 `tauri build` 后即为 **115/115 全绿**（跳过项会打印具体原因）。
+
 界面视觉基线、接口契约与记忆库文件形状见 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) 与 [`docs/PRODUCT.md`](docs/PRODUCT.md)。
 
 ## 已知边界
