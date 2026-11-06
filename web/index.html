@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>WakeDream · 夜间会话整理</title>
+  <meta name="description" content="WakeDream：把各 Agent 的会话收拢到一处，夜里做一次梦，萃取成可挂载的语义记忆库。UI 参考 Wake。">
+  <link rel="icon" type="image/svg+xml" href="./assets/logo.svg">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="sidebar-head">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/>
+            <path d="M3 20.5h18"/>
+            <path d="M6.5 20.5a5.5 5.5 0 0 1 11 0"/>
+          </svg>
+        </span>
+        <div>
+          <div class="brand-name">WakeDream</div>
+          <div class="brand-sub">夜间会话整理</div>
+        </div>
+        <span class="spacer"></span>
+        <button class="icon-btn" id="theme-toggle" type="button" title="切换外观" aria-label="切换外观"></button>
+      </div>
+
+      <nav class="nav" id="nav" aria-label="主导航"></nav>
+
+      <div class="sidebar-body scroll" id="sidebar-body"></div>
+
+      <div class="sidebar-foot">
+        <div class="progress-track" id="progress-track" hidden><div class="progress-bar"></div></div>
+        <div class="status-line" id="status-line"></div>
+      </div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <div class="topbar-title">
+          <h1 id="page-title">今日</h1>
+          <span class="sub" id="page-sub"></span>
+        </div>
+        <span class="spacer"></span>
+        <span class="topbar-note" id="topbar-note"></span>
+        <div class="topbar-actions">
+          <button class="btn" id="btn-scan" type="button">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8V5.5A2.5 2.5 0 0 1 5.5 3H8M16 3h2.5A2.5 2.5 0 0 1 21 5.5V8M21 16v2.5a2.5 2.5 0 0 1-2.5 2.5H16M8 21H5.5A2.5 2.5 0 0 1 3 18.5V16"/><path d="M12 12h.01"/><path d="M12 6v3M12 15v3M6 12h3M15 12h3"/></svg>
+            扫描本机会话
+          </button>
+          <button class="btn btn--primary" id="btn-dream" type="button">
+            <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 14.5A8.5 8.5 0 0 1 9.5 4a8.5 8.5 0 1 0 10.5 10.5Z"/><path d="M17 3.5l.8 1.7 1.7.8-1.7.8-.8 1.7-.8-1.7-1.7-.8 1.7-.8Z"/></svg>
+            现在做梦
+          </button>
+        </div>
+      </header>
+      <main class="view" id="view"></main>
+    </div>
+  </div>
+
+  <div class="toast-stack" id="toast-stack" aria-live="polite"></div>
+  <div id="modal-root"></div>
+  <script type="module" src="./app.js"></script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "name": "wakedream",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "WakeDream — 夜间会话整理客户端：把本机与远端设备上所有 Agent 的会话收进一处，夜间用「做梦」把当天会话萃取成语义记忆库，供未来的会话只读挂载。UI 参考 Wake。",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "start": "node src/server/main.js",
+    "scan": "node bin/scan.js",
+    "dream": "node bin/dream.js",
+    "sync": "node bin/sync.js",
+    "test": "node --test \"test/**/*.test.js\""
+  }
+}

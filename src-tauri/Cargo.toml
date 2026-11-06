@@ -1,0 +1,23 @@
+[package]
+name = "wakedream-desktop"
+version = "0.1.0"
+description = "WakeDream 桌面客户端（Tauri v2 壳 + Node 边车）"
+authors = ["WakeDream"]
+edition = "2021"
+rust-version = "1.77"
+license = "MIT"
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-shell = "2"
+tauri-plugin-opener = "2"
+
+[profile.release]
+# 桌面端要的是「快点编译完 + 体积别太夸张」；LTO 会让首次构建明显变慢，所以关掉。
+lto = false
+codegen-units = 16
+strip = true
+panic = "abort"

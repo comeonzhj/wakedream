@@ -1,0 +1,17 @@
+{
+  "name": "wakedream-desktop",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "WakeDream 桌面端（Tauri v2）构建期工具与依赖：Tauri CLI、esbuild、postject。运行时零依赖，这些包只用于打边车与打包。",
+  "scripts": {
+    "tauri": "tauri",
+    "sidecar": "node ../scripts/build-sidecar.mjs",
+    "icons": "tauri icon icon-source.png -o ../src-tauri/icons"
+  },
+  "devDependencies": {
+    "@tauri-apps/cli": "^2",
+    "esbuild": "^0.25.0",
+    "postject": "^1.0.0-alpha.6"
+  }
+}

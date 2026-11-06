@@ -1,0 +1,26 @@
+# 运行期数据（绝不入库）
+.wakedream/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+logs/
+*.log
+
+# 本地临时
+.DS_Store
+node_modules/
+/tmp/
+*.tmp
+
+# tauri-build 自动生成的 schema（可重建）
+src-tauri/gen/schemas/
+
+# 桌面端构建产物（只提交源码：src-tauri 的 Rust 源码与配置进库，编译产物不进）
+src-tauri/target/
+src-tauri/binaries/
+dist/
+*.app/
+*.dmg
+
+# 打包/发布临时
+.tauri/

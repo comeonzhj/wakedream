@@ -1,0 +1,10 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "桌面端前端不调用任何 Tauri IPC（界面是边车服务的普通网页），所以这里只保留 core 的默认能力；shell/opener 的权限只在 Rust 侧使用，不开放给网页。",
+  "windows": ["main"],
+  "remote": {
+    "urls": ["http://127.0.0.1:*", "http://localhost:*"]
+  },
+  "permissions": ["core:default"]
+}

@@ -1,0 +1,221 @@
+{
+  "_comment": "合成会话 fixture：一天里 3 个主会话（2 个项目 / 2 个 agent）+ 1 个子会话。startedLocal 是不带时区的本地时间，测试里 new Date() 按本地时区解析。",
+  "sessions": [
+    {
+      "id": "local:dsh:11111111",
+      "nativeId": "11111111",
+      "agent": "dsh",
+      "host": "local",
+      "project": "wakedream",
+      "projectPath": "/Users/tester/code/wakedream",
+      "title": "实现 dream 引擎与记忆库",
+      "cwd": "/Users/tester/code/wakedream",
+      "model": "DeepSeek-V4.1-Flash",
+      "startedLocal": "2026-11-06T09:00:00",
+      "durationMs": 900000,
+      "messageCount": 8,
+      "tokens": 4200,
+      "source": "local",
+      "isSubagent": 0,
+      "parentId": null,
+      "messages": [
+        {
+          "seq": 0,
+          "role": "user",
+          "kind": "text",
+          "text": "帮我把 wake 这个开源项目拉下来，做成夜间整理会话的客户端。就按 heuristic 做默认 provider，因为要能离线跑。"
+        },
+        {
+          "seq": 1,
+          "role": "user",
+          "kind": "text",
+          "text": "以后都用中文回答，代码注释也用中文。"
+        },
+        {
+          "seq": 2,
+          "role": "user",
+          "kind": "text",
+          "text": "还有个问题：远端同步怎么验证？"
+        },
+        {
+          "seq": 3,
+          "role": "assistant",
+          "kind": "text",
+          "text": "结论是：heuristic provider 不需要 API key，因此没有 key 的机器也能跑完整轮。"
+        },
+        {
+          "seq": 4,
+          "role": "assistant",
+          "kind": "text",
+          "text": "记忆库固定写在 ~/.wakedream/memory/dreams/<day>/<store>/ 下，先写 tmp 目录再原子 rename。"
+        },
+        {
+          "seq": 5,
+          "role": "assistant",
+          "kind": "tool_call",
+          "text": "{\"command\":\"node --test test/dream.test.js\"}",
+          "meta": {
+            "name": "Bash",
+            "input": {
+              "command": "node --test test/dream.test.js"
+            }
+          }
+        },
+        {
+          "seq": 6,
+          "role": "tool",
+          "kind": "tool_result",
+          "text": "ok 12 - dream.test.js\n# pass 12",
+          "meta": {
+            "name": "Bash",
+            "isError": false
+          }
+        },
+        {
+          "seq": 7,
+          "role": "user",
+          "kind": "text",
+          "text": "下一步：把记忆库挂给下一个会话验证一次，待定用哪种挂载方式。"
+        }
+      ]
+    },
+    {
+      "id": "local:claude-code:22222222",
+      "nativeId": "22222222",
+      "agent": "claude-code",
+      "host": "local",
+      "project": "wakedream",
+      "projectPath": "/Users/tester/code/wakedream",
+      "title": "修记忆库的相对链接",
+      "cwd": "/Users/tester/code/wakedream",
+      "model": "claude-sonnet-4-5",
+      "startedLocal": "2026-11-06T14:30:00",
+      "durationMs": 600000,
+      "messageCount": 6,
+      "tokens": 2600,
+      "source": "local",
+      "isSubagent": 0,
+      "parentId": null,
+      "messages": [
+        {
+          "seq": 0,
+          "role": "user",
+          "kind": "text",
+          "text": "以后都用中文回答，代码注释也用中文。"
+        },
+        {
+          "seq": 1,
+          "role": "user",
+          "kind": "text",
+          "text": "决定把记忆库里所有链接改成相对路径，因为要支持整体拷走。"
+        },
+        {
+          "seq": 2,
+          "role": "assistant",
+          "kind": "text",
+          "text": "结论是：相对链接必须在每个文件所在的目录下解析，所以从 projects/ 指向索引要写 ../_index.md。"
+        },
+        {
+          "seq": 3,
+          "role": "assistant",
+          "kind": "tool_call",
+          "text": "{\"command\":\"node --test test/dream.test.js\"}",
+          "meta": {
+            "name": "Bash",
+            "input": {
+              "command": "node --test test/dream.test.js"
+            }
+          }
+        },
+        {
+          "seq": 4,
+          "role": "assistant",
+          "kind": "text",
+          "text": "注意：source_sessions 必须写原始会话 id，不能写文件名。"
+        },
+        {
+          "seq": 5,
+          "role": "user",
+          "kind": "text",
+          "text": "下一步要把 sessions/ 目录里的摘要也补上相对链接。"
+        }
+      ]
+    },
+    {
+      "id": "ssh:mac-mini:codex:33333333",
+      "nativeId": "33333333",
+      "agent": "codex",
+      "host": "ssh:mac-mini",
+      "project": "lark-cli",
+      "projectPath": "/Users/tester/code/lark-cli",
+      "title": "调 lark-cli 的审批接口",
+      "cwd": "/Users/tester/code/lark-cli",
+      "model": "gpt-5",
+      "startedLocal": "2026-11-06T20:05:00",
+      "durationMs": 300000,
+      "messageCount": 4,
+      "tokens": 900,
+      "source": "ssh:mac-mini",
+      "isSubagent": 0,
+      "parentId": null,
+      "messages": [
+        {
+          "seq": 0,
+          "role": "user",
+          "kind": "text",
+          "text": "帮我查一下 lark-cli 的审批待办怎么拉，注意别把 token 打出来。"
+        },
+        {
+          "seq": 1,
+          "role": "assistant",
+          "kind": "text",
+          "text": "结论是：审批待办走 lark-cli approval list --status pending，凭据从环境变量读，不落盘。"
+        },
+        {
+          "seq": 2,
+          "role": "user",
+          "kind": "text",
+          "text": "还有个问题：待确认能不能批量同意？"
+        },
+        {
+          "seq": 3,
+          "role": "user",
+          "kind": "text",
+          "text": "我更喜欢用表格汇报结果。"
+        }
+      ]
+    },
+    {
+      "id": "local:dsh:sub-44444444",
+      "nativeId": "sub-44444444",
+      "agent": "dsh",
+      "host": "local",
+      "project": "wakedream",
+      "projectPath": "/Users/tester/code/wakedream",
+      "title": "子会话：跑测试",
+      "cwd": "/Users/tester/code/wakedream",
+      "model": "DeepSeek-V4.1-Flash",
+      "startedLocal": "2026-11-06T09:10:00",
+      "durationMs": 120000,
+      "messageCount": 2,
+      "tokens": 300,
+      "source": "local",
+      "isSubagent": 1,
+      "parentId": "local:dsh:11111111",
+      "messages": [
+        {
+          "seq": 0,
+          "role": "user",
+          "kind": "text",
+          "text": "跑一遍 dream 的测试。"
+        },
+        {
+          "seq": 1,
+          "role": "assistant",
+          "kind": "text",
+          "text": "结论是：12 个测试全部通过。"
+        }
+      ]
+    }
+  ]
+}
