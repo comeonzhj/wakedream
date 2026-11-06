@@ -1,0 +1,115 @@
+# WakeDream 桌面端三平台打包 / 发版。
+#
+# 仓库根即应用根（应用源码在 src/、src-tauri/、web/）。
+# 结构：矩阵先各自「装 Rust + 打边车（Node SEA）」，再用 tauri-apps/tauri-action 出安装包。
+# 边车必须在 tauri build 之前就位（src-tauri/binaries/wakedream-server-<triple>），
+# 因为 externalBin 是编译期就被 Tauri 拷到产物里的。
+#
+# 触发：
+#   - 手动（Actions → 运行工作流）：只构建产物，不上传 release；
+#   - 推 tag v*（例如 v0.1.0）：构建并创建/更新对应的 GitHub Release。
+#
+# 说明：本仓库只在 macOS arm64 真机上构建并启动验证过（见 docs/DESKTOP.md）。
+# Windows / Linux 这两条腿是「配置正确但未真机验证」，第一次跑需要在 CI 上看结果。
+name: desktop
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: macos-14          # Apple Silicon
+            target: aarch64-apple-darwin
+            bundles: app,dmg
+          - platform: macos-13          # Intel
+            target: x86_64-apple-darwin
+            bundles: app,dmg
+          - platform: ubuntu-22.04
+            target: x86_64-unknown-linux-gnu
+            bundles: deb,appimage
+          - platform: windows-latest
+            target: x86_64-pc-windows-msvc
+            bundles: nsis,msi
+
+    runs-on: ${{ matrix.platform }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 安装 Node（边车用 Node SEA，必须 ≥ 22.5）
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22.18.0'
+
+      - name: 安装 Rust（stable + 目标 triple）
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.target }}
+
+      - name: 缓存 cargo
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: app/src-tauri
+
+      - name: Linux 系统依赖（webkit2gtk 等）
+        if: matrix.platform == 'ubuntu-22.04'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libappindicator3-dev \
+            librsvg2-dev \
+            patchelf \
+            build-essential \
+            curl wget file libxdo-dev libssl-dev libayatana-appindicator3-dev
+
+      - name: 桌面端构建期依赖（Tauri CLI / esbuild / postject，装在 app/desktop，不动 app/package.json）
+        working-directory: desktop
+        run: npm install --no-audit --no-fund
+
+      - name: 打边车（esbuild 单文件 CJS → Node SEA → postject 注入 → 重签名）
+        run: node scripts/build-sidecar.mjs --target ${{ matrix.target }}
+
+      - name: macOS 上给边车 ad-hoc 重签（注入会破坏原签名）
+        if: startsWith(matrix.platform, 'macos')
+        run: |
+          codesign --remove-signature "src-tauri/binaries/wakedream-server-${{ matrix.target }}" || true
+          codesign --sign - --force --timestamp=none "src-tauri/binaries/wakedream-server-${{ matrix.target }}"
+          codesign -dv "src-tauri/binaries/wakedream-server-${{ matrix.target }}" 2>&1 | head -3
+
+      - name: 跑测试（含桌面端自检；边车已就位，所以边车相关断言是硬断言）
+        run: node --test test/desktop.test.js
+
+      - name: 打包（tauri-action）
+        uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # 没有 Apple 开发者证书：macOS 走 ad-hoc 签名（tauri.conf.json 里 signingIdentity: "-"）
+          # 正式发版要换成真证书 + 公证，见 docs/DESKTOP.md「签名与公证」
+          APPLE_SIGNING_IDENTITY: '-'
+        with:
+          args: --target ${{ matrix.target }} --bundles ${{ matrix.bundles }}
+          tagName: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
+          releaseName: ${{ github.ref_type == 'tag' && format('WakeDream {0}', github.ref_name) || '' }}
+          releaseBody: '桌面端三平台产物。macOS 为 ad-hoc 签名（未公证），首次打开需右键 → 打开。'
+          releaseDraft: true
+          prerelease: false
+
+      - name: 上传未发版的构建产物（手动触发时也能拿到）
+        if: github.ref_type != 'tag'
+        uses: actions/upload-artifact@v4
+        with:
+          name: wakedream-${{ matrix.target }}
+          path: |
+            app/src-tauri/target/${{ matrix.target }}/release/bundle/**
+          if-no-files-found: warn

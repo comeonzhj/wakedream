@@ -22,7 +22,7 @@ const APP = path.resolve(__dirname, '..');
 const SRC_TAURI = path.join(APP, 'src-tauri');
 const DESKTOP = path.join(APP, 'desktop');
 const BIN_DIR = path.join(SRC_TAURI, 'binaries');
-const WORKFLOWS = path.resolve(APP, '..', '.github', 'workflows');
+const WORKFLOWS = path.resolve(APP, '.github', 'workflows');  // 仓库根 == 应用根
 
 const readJson = (p) => JSON.parse(fs.readFileSync(p, 'utf8'));
 const read = (p) => fs.readFileSync(p, 'utf8');
@@ -397,7 +397,9 @@ test('19. GitHub Actions：三平台矩阵用 tauri-action 打包', () => {
     assert.ok(wf.includes('x86_64-apple-darwin'), '缺 macOS x64 target');
     assert.ok(wf.includes('x86_64-pc-windows-msvc'), '缺 Windows target');
     assert.ok(wf.includes('x86_64-unknown-linux-gnu'), '缺 Linux target');
-    assert.ok(wf.includes('projectPath: app'), '工作流要指向 app/ 子目录');
+    // 发布的仓库根就是应用根（源码在 src/、src-tauri/、web/），所以不应再设置 projectPath
+    assert.ok(!wf.includes('projectPath'), '仓库根即应用根，工作流不应设置 projectPath');
+    assert.ok(wf.includes('src-tauri'), '工作流要指向仓库根下的 src-tauri');
     assert.ok(wf.includes('build-sidecar.mjs'), '打包前必须先构建边车');
 });
 
