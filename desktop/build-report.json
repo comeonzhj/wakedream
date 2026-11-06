@@ -20,13 +20,13 @@
           "ok": true,
           "app": "WakeDream",
           "version": "0.1.0",
-          "home": "/var/folders/9b/chp0xchx24vdd5p16165_cjh0000gn/T/wd-sea-home-NytDbS",
+          "home": "<tmp-home>",
           "now": 1793949954589,
           "lastScanAt": null,
           "lastDreamAt": null,
           "lan": {
             "enabled": false,
-            "deviceName": "jia-mini.local"
+            "deviceName": "<device>"
           }
         },
         "ms": 1034,
@@ -51,7 +51,7 @@
       }
     ],
     "port": 4888,
-    "home": "/var/folders/9b/chp0xchx24vdd5p16165_cjh0000gn/T/wd-sea-home-NytDbS",
-    "log": "07:25:54 [server] WakeDream v0.1.0 已启动：http://127.0.0.1:4888  （数据目录 /var/folders/9b/chp0xchx24vdd5p16165_cjh0000gn/T/wd-sea-home-NytDbS）\n07:25:54 [server] api 模块：已加载 8 个\n[sidecar] 就绪 http://127.0.0.1:4888 pid=3152\n07:25:54 [server] GET /api/health 200 2ms\n07:25:54 [server] GET / 200 2ms\n"
+    "home": "<tmp-home>",
+    "log": "07:25:54 [server] WakeDream v0.1.0 已启动：http://127.0.0.1:4888  （数据目录 <tmp-home>）\n07:25:54 [server] api 模块：已加载 8 个\n[sidecar] 就绪 http://127.0.0.1:4888 pid=3152\n07:25:54 [server] GET /api/health 200 2ms\n07:25:54 [server] GET / 200 2ms\n"
   }
 }

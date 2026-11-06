@@ -238,7 +238,7 @@ wakedream 9242 … TCP 127.0.0.1:4680->127.0.0.1:51285 (ESTABLISHED)
 
 # 4) 健康检查（真实数据目录）
 {"ok":true,"app":"WakeDream","version":"0.1.0","home":"$HOME/.wakedream",
- "lastScanAt":1793939010483,"lastDreamAt":1793939014456,"lan":{"enabled":false,"deviceName":"jia-mini.local"}}
+ "lastScanAt":1793939010483,"lastDreamAt":1793939014456,"lan":{"enabled":false,"deviceName":"<device>"}}
 
 # 5) ~/.wakedream/logs/desktop.log：窗口加载的是「今日」页
 [desktop] 端口：4680（默认 4680）
